@@ -1,18 +1,31 @@
-export type IData<T = any> = T | undefined | null;
-export type IQueue<T = any> = [string, IData<T>][];
-export type IMaybeData<T = any> = Promise<IData<T> | void>;
-export type IUpdater<T = any> = (draft: IChip<T>) => void;
-export type IUpdate<T = any> = IData<T> | IMaybeData<T> | IUpdater<T>;
+import { Draft } from 'immer';
+
+export type IError = Error | string;
+export type IData = null | string | number | symbol | Record<string | number | symbol, unknown>;
+export type IQueue<T = IData> = [string, T][];
+export type IChips<T = IData> = Map<string, IChip<T>>;
+export type IUpdate<T = IData> = T | IDraft<T>;
+export type IUpdater<T = IData> = (update: IUpdate<T>) => void;
+export type IConvey<T = IData> = Set<IUpdater<T>>;
+export type IDraft<T = IData> = (draft: Draft<T>) => T | void;
 export type IStatus = {
-  type: 'IDLE' | 'LOADING' | 'SUCCESS' | 'ERROR';
-  message?: Error | string;
+  type: 'IDLE' | 'LOADING' | 'ERROR' | 'SUCCESS';
+  message?: IError;
 };
-export type IChip<T> = {
-  data: IData<T>;
-  status: IStatus;
-};
-export interface IUseChip<T> extends IChip<T> {
-  key: string;
-  set: (update: IUpdate<T>) => void;
+
+export interface IOptions<T = unknown> {
+  timeout?: number;
+  onInit?: () => void;
+  onSuccess?: (resp: T) => void;
+  onError?: (error: IError) => void;
+  wrapResp?: (...args: any[]) => T;
 }
-export type IChips<T = any> = Map<string, IUseChip<T>>;
+export interface IChip<T = IData> {
+  data: T | undefined;
+  status: IStatus;
+}
+export interface IQuery<T = IData> {
+  cut: (chip: IChip) => void;
+  set: (chip: IChip<T>) => void;
+  get: () => IChip<T> | undefined;
+}
