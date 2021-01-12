@@ -1,43 +1,43 @@
-import produce from 'immer';
+import produce from "immer";
 
-import * as TS from './types';
+import * as TS from "./types";
 
 export function newChip<T = TS.IData>(data?: T): TS.IChip<T> {
-  return { data, status: { type: 'IDLE' } };
+  return { data, status: { type: "IDLE" } };
 }
 
 export function chopper(chop: TS.IChip, update: TS.IUpdate) {
-  if (typeof update === 'function') {
+  if (typeof update === "function") {
     const data = produce(chop.data, update as TS.IDraft);
     return newChip(data);
   } else {
     return produce<TS.IChip>(chop, (draft) => ({
       ...draft,
-      data: update,
+      data: update
     }));
   }
 }
 
 export function mockAsync<T = TS.IData>(data: T, timeout?: number) {
-  return new Promise((resolve, reject) => {
+  return new Promise<T>((resolve, reject) => {
     setTimeout(() => {
       if (data !== undefined) resolve(data);
-      else reject({ message: 'ChipperError: .mockAsync() failed' });
+      else reject({ message: "ChipperError: .mockAsync() failed" });
     }, timeout || 0);
   });
 }
 
-export async function makeAsync<T = unknown>(
-  Query: TS.IQuery,
-  async: Promise<T>,
-  options?: TS.IOptions,
+export async function makeAsync<T = TS.IData>(
+  Query: TS.IQuery<T>,
+  async: Promise<T | undefined>,
+  options?: TS.IOptions
 ) {
   function setStatus(type: any, message?: any) {
     const chip = { ...Query.get(), status: { type, message } };
-    Query.set(chip as TS.IChip);
+    Query.set(chip as TS.IChip<T>);
   }
   function initAsync() {
-    setStatus('LOADING');
+    setStatus("LOADING");
     return options?.onInit && options.onInit();
   }
   async function runAsync(): Promise<T | Error> {
@@ -48,13 +48,13 @@ export async function makeAsync<T = unknown>(
     }
   }
   function failAsync(message: string) {
-    setStatus('ERROR', message);
+    setStatus("ERROR", message);
     return options?.onError && options.onError(message);
   }
   function finishAsync(resp: T) {
     const data = options?.wrapResp ? options.wrapResp(resp) : resp;
-    const chip = { data, status: { type: 'SUCCESS' } };
-    Query.set(chip as TS.IChip);
+    const chip = { data, status: { type: "SUCCESS" } };
+    Query.set(chip as TS.IChip<T>);
     return options?.onSuccess && options.onSuccess(data);
   }
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render } from 'react-dom';
 
 import App from './App';
-import Chipper from './lib';
+import Chipper from './lib/Chipper';
 
 Chipper.createQueue([
   ['user', { uid: '12345', name: 'piglet' }],

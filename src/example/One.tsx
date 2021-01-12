@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useChipper } from '../lib';
+import { useRenderCounter } from '../lib/Counter';
 
 type User = {
   uid: string;
   name: string;
 };
 export const One: React.FC = () => {
+  const [count] = useRenderCounter('one');
   const user = useChipper<User>('user');
   const onClick = () => {
     user.set(
@@ -13,7 +15,7 @@ export const One: React.FC = () => {
         draft.uid = 'asd';
       },
       {
-        timeout: 3000,
+        timeout: 1000,
         onInit: () => console.log('init'),
         onError: (error) => console.log('error', error),
         onSuccess: (resp) => console.log('resp', resp),
@@ -26,6 +28,7 @@ export const One: React.FC = () => {
       <button onClick={onClick}>set</button>
       <pre>{JSON.stringify(user.data)}</pre>
       <pre>{JSON.stringify(user.status)}</pre>
+      <pre>rerenders: {count}</pre>
     </div>
   );
 };
