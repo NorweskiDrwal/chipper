@@ -1,20 +1,15 @@
 import * as React from "react";
-import "./styles.css";
 
-// import { One } from "./example/One";
-// import { Two } from "./example/Two";
-import { Three } from "./example/Three";
-import { Four } from "./example/Four";
+import { One } from "./example/One";
+import { Two } from "./example/Two";
 
 export default function App() {
   return (
     <div className="App">
       <h1>Hello CodeSandbox</h1>
       <h2>Start editing to see some magic happen!</h2>
-      {/* <One />
-      <Two /> */}
-      <Three />
-      <Four />
+      <One />
+      <Two />
     </div>
   );
 }

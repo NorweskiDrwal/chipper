@@ -1,9 +1,15 @@
 {
   "name": "chipper",
-  "version": "0.9.3",
-  "description": "",
+  "version": "0.9.4",
+  "description": "Chipper is a micro state management tool",
   "keywords": [],
   "main": "src/index.tsx",
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "immer": "8.0.0",
     "react": "17.0.1",
@@ -15,11 +21,9 @@
     "@types/react-dom": "16.9.5",
     "typescript": "3.7.5"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+  "peerDependencies": {
+    "immer": "8.0.0",
+    "react": "17.0.1"
   },
   "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
 }
