@@ -30,20 +30,20 @@ export class ChipperOperator extends ChipperQueue {
       get: (cKey?: string) => this.chips.get(cKey || key) as TS.IChip<T>,
       cut: (cKey?: string) => this.chips.delete(cKey || key),
       set: <R = T>(chop: R | TS.IChip<R>, cKey?: string) => {
-        if (!(chop instanceof Promise)) {
+        if (typeof chop !== "function" && !(chop instanceof Promise)) {
           let chip = chop as TS.IChip<R>;
           if (chip.status === undefined) chip = Utils.newChip(chop as R);
           this.chips.set(cKey || key, chip as TS.IChip);
           this.convey(cKey || key, chip as TS.IChip);
-        }
-      }
+        } else console.warn("ChipperError: Promises and functions are ignored");
+      },
     };
   }
 }
 
 const Chipper = new ChipperOperator();
 
-export function useChipper<T = TS.IData>(key: string, data?: T) {
+export function useChip<T = TS.IData>(key: string, data?: T) {
   const query = Chipper.queryQueue(key, data);
   const chop = query.get();
   const [, updater] = React.useState(chop) as [never, TS.IDispatch];

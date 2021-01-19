@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useChipper } from "../lib";
+import { useChip } from "../lib";
 import { useRenderCounter } from "./Counter";
 
 type User = {
@@ -8,7 +8,7 @@ type User = {
 };
 export const One: React.FC = () => {
   const [count] = useRenderCounter("user");
-  const user = useChipper<User>("user");
+  const user = useChip<User>("user");
   const onClick = () => {
     user.set(
       (draft) => {
@@ -16,10 +16,9 @@ export const One: React.FC = () => {
       },
       {
         timeout: 1000,
-        persist: true,
         onInit: () => console.log("init"),
         onError: (error) => console.log("error", error),
-        onSuccess: (resp) => console.log("resp", resp)
+        onSuccess: (resp) => console.log("resp", resp),
       }
     );
   };

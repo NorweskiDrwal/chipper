@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useChipper } from "../lib";
+import { useChip } from "../lib";
 import { useRenderCounter } from "./Counter";
 
 type Theme = {
@@ -13,7 +13,7 @@ type User = {
 export const Two: React.FC = () => {
   const [count] = useRenderCounter("theme");
   // const user = useChipper<User>("user");
-  const theme = useChipper<Theme>("theme");
+  const theme = useChip<Theme>("theme");
   const onClickOne = () => {
     theme.set(
       (draft) => {
@@ -23,7 +23,7 @@ export const Two: React.FC = () => {
         timeout: 1000,
         onInit: () => console.log("init"),
         onError: (error) => console.log("error", error),
-        onSuccess: (resp) => console.log("resp", resp)
+        onSuccess: (resp) => console.log("resp", resp),
       }
     );
   };

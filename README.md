@@ -1,205 +1,176 @@
 # Chipper
 
-Chipper is a micro state-management tool aimed at perfect (for me 🤡 ) developer experience and idiot-proof 🙈 🙉 🙊 (because I need it) API.<br>
-Chipper is my personal experiment. I needed to learn about classes and observables. Context API has been great for me in all my personal projects, but using observables solves more problems.
+### Chipper is a micro state-management tool aimed at perfect (for me 🤡 ) developer experience and idiot-proof 🙈 🙉 🙊 (because I need it) API.<br>
 
-## Wat? 🗿
+### Chipper is my personal experiment. I needed to learn about classes and observables. Context API has been great for me in all my personal projects, but using observables solves more problems.
 
+<br>
+
+## [CLICK HERE](src/lib/CHIPPER_DOCS.md) to read the docs
+
+<br>
+
+# Wat? 🗿
+
+- minimal setup
 - written with TS
+- no excess re-renders
 - react and react-native friendly
 - [immer](https://immerjs.github.io/immer/docs/introduction) is used somewhere inside (easier that way) 🎉
 - built-in capabilities for handling status of async functions
-- almost framework-agnostic (because there's a hook you can use if you want)
+- almost framework-agnostic (because there's a React hook you can use if you want)
 
-## Why?
+<br>
 
-I got bored with conventional solutions (looking at you, Redux). Don't get me wrong, [Redux](https://redux.js.org/) is a great tool (especially now, when [redux-toolkit](https://redux-toolkit.js.org/) is a thing), but setting up global store and making it work with [TypeScript](https://www.typescriptlang.org/) is always a treat...<br>
-Since I don't get to set up fresh redux store very often, I always have to re-learn the docs in order to have the whole thing working the way I like. Well, not anymore.<br>
-Chipper's API reflects my idea of a perfect state-management tool. Experience may vary 🤷
+# Why?
 
-## How?
+### I got bored with conventional solutions (looking at you, Redux). Don't get me wrong, [Redux](https://redux.js.org/) is a great tool (especially now, ever since [redux-toolkit](https://redux-toolkit.js.org/) is a thing), but setting up global store and making it work with [TypeScript](https://www.typescriptlang.org/) is always a treat...<br>
 
-```
+### Since I don't get to set up fresh redux store very often, I always have to re-learn the docs in order to have the whole thing working the way I like it. Well, not anymore.
+
+### Chipper's API reflects my idea of a perfect (experience may vary 🤷) state-management tool that handles async and TypeScript out of the box with microscopic setup.
+
+<br>
+
+# How?
+
+In the terminal
+
+```javascript
 yarn add chipper
-
+// or
 npm install chipper
 ```
 
-The tool consists of two elements: `Chipper` class instance and `useChipper` hook, however, you don't have to use the hook, because state can be accessed from outside of react components. It won't be reactive though, so no re-rendering logic to keep everything in check.
+In the code
 
-### 1) `Chipper`
-
-First, let's set up the initial store (you can omit this step):
-
-```
-import Chipper from '@chipper';
+```javascript
+import Chipper, { useChip } from "chipper";
 
 Chipper.createQueue([
   ["user", { uid: "12345", name: "piglet" }],
   ["theme", { dark: true, color: "pink" }],
-  ["friends", { joey: "how you doin'?" }]
 ]);
 
-// or you can lazy-load them in other components
-Chipper.createQueue([["user", { uid: "12345", name: "piglet" }]]);
-//
-Chipper.createQueue([["theme", { dark: true, color: "pink" }]]);
-```
-
-As you can see, we pass an array of tuples to a `.createQueue()` method. We do that, because the store is built on top of a `Map()` instance (why rewrite something that works great out of the box, right?)<br>
-
-You can go commando and use `Chipper`'s methods to read and set up the store yourself from somewhere random and/or outside of React with `.queryQueue()`. You don't have to use `.createQueue()` to populate the state, however it takes precedence over other methods.
-
-```
-import Chipper from '@chipper';
-
-// add to Chipper somewhere in your code
-Chipper.queryQueue('user', { uid: "12345", name: "piglet" });
-
-// or
-Chipper.queryQueue('user').set({ uid: "12345", name: "piglet" });
-
-// or if for some reason you want to change other chips from other chips
-Chipper.queryQueue('theme').get() // -> { dark: true, color: "pink" }
-Chipper.queryQueue('user').set({ dark: false, color: "purple" }, "theme"); // notice the second string argument "theme" passed to the .set() function
-Chipper.queryQueue('theme').get() // -> { dark: false, color: "purple" }
-
-
-// grab default from Chipper somewhere else in your code
-Chipper.queryQueue('user').get() // -> { uid: "12345", name: "piglet" }
-
-// or if you want to grab other chips' state from other chips
-Chipper.queryQueue('user').get('theme') // -> { dark: false, color: "purple" }
-
-```
-
-These are some of the building blocks of `useChipper` hook.
-I had a case of having to update state outside of React once, so I wanted to make sure I'll have an easy way of adding data from wherever, whenever.
-
-Check [here]() to learn more.
-
-### 2) `useChipper`
-
-If you work with React/React-Native do yourself a favor and `useChipper`. It's easier that way.<br>
-`useChipper` handles rerendering and subscription to state of the components that use it.
-
-#### a) read
-
-To read the chip use `data` and/or `status` props from the returned object.
-`data` can be changed by you, `status` is handled by the hook:
-
-```
-import { useChipper } from '@lumberyard/chipper';
-
 const MyComponent = () => {
-  const { data, status } = useChipper('user');
+  const { data, status, set } = useChip('user');
 
-  console.log(data); // -> { uid: "12345", name: "piglet" }
-  console.log(status); // -> { type: "IDLE" | "LOADING" | "ERROR" | "SUCCESS", message: Error | string | undefined }
-
-  return (...)
-}
-```
-
-#### b) write
-
-`useChipper` gives you a bunch of options to add data to state:
-
-```
-import { useChipper } from '@lumberyard/chipper';
-
-const MyComponent = () => {
-  const { set } = useChipper('user');
-
-  // using primitives
-  set('hello world');
-
-  // using selectors
-  set((draft) => {
-    draft.uid = 'new_uid';
+  set((user) => {
+    user.name = 'pooh';
   });
 
-  // using mocked primitives
-  set('hello world', { timeout: 2000 });
-
-  // using mocked selectors
-  set((draft) => {
-    draft.uid = 'new_uid';
-  }, { timeout: 2000 });
-
-  // using async
-  set(new Promise(...));
-
   return (...)
 }
 ```
 
-#### c) meddle
+And that's pretty much it. Congratulations, you just spent 10 seconds setting up your global state. Time well spent, now go, procrastinate some more 🤡
 
-`useChipper` also introduces `api` property with access to some lower level `Chipper` methods. You can go naughty and put your hands on state in other chips from here. It is the exact same Chipper API, so these changes do not rerender subscribed components, just update the state:
+<br>
+<br>
+<br>
 
-```
-import { useChipper } from '@lumberyard/chipper';
+# What now?
 
-const MyComponent = () => {
-  const { api } = useChipper('user');
+## Scroll down for more elaborate example or [CLICK HERE](src/lib/CHIPPER_DOCS.md) to read the docs
 
-  api.set({ dark: false, color: "purple" }) // -> updates 'user' data
-  api.set({ dark: false, color: "purple" }, "theme") // -> updates 'theme' data
-  api.get() // -> grabs 'user' state
-  api.get('theme') // -> grabs 'theme' state
-  api.cut() // -> removes 'user' chip
-  api.cut('theme') // -> removes 'theme' chip
+<br>
+<br>
 
-  return (...)
-}
-```
+## More elaborate example
 
-## Chipper API
-
-Chipper's store consists of smaller pieces of state calles "chips".
-Chips are objects...
-
-```
-const chip = {
-  data: {...},
-  status: { type: '...', message: '...'}
-}
-```
-
-... stored inside a `Map()` instance like so: `new Map().set('key', chip)`
-
-### 1) `Chipper` props
-
-- `createQueue(queue: IQueue): void`<br>
-  TS: `type IQueue<T = IData> = [string, T][];`<br>
-  This method loads chips into Chipper. It takes the tuple's second item and turns it into a chip
-
-- `queryQueue(key: string, data: IData): IQuery`<br>
-  This method returns an object with properties:
-  - `get(cKey?: string): IChip`
-  - `set(data: IData | IChip, cKey?: string): void` ->
-  - `cut(cKey?: string): boolean` ->
-
-## Examples
-
-#### 1) Basic
-
-```
-import Chipper, { useChipper } from '@lumberyard/chipper';
+```javascript
+import Chipper, { useChip } from "chipper";
 
 Chipper.createQueue([
   ["user", { uid: "12345", name: "piglet" }],
   ["theme", { dark: true, color: "pink" }],
-  ["friends", { joey: "how you doin'?" }]
 ]);
 
-const MyComponent = () => {
-  const { data, status, set } = useChipper('user');
+// for typescript
+type User = { uid: string, name: string };
+type Theme = { dark: boolean, color: string };
+```
+
+```javascript
+const MyComponentA = () => {
+  const { data, status, set, api } = useChip<User>('user');
+
+  console.log(data); // { uid: "12345", name: "piglet" }
+  console.log(status); // { type: "IDLE", message: undefined }
+
+  set((user) => {
+    user.name = 'pooh'
+  });
+  console.log(data); // { uid: "12345", name: "pooh" }
+  console.log(status); // { type: "IDLE", message: undefined }
+
+  // or
+  set({ uid: "54321", name: "pooh" }, {
+    timeout: 2000,
+  })
+  console.log(data); // after two seconds { uid: "54321", name: "pooh" }
+  console.log(status); // after two seconds { type: "SUCCESS", message: undefined }
+
+  // or
+  set(someAsyncFunction, {
+    onSuccess: (response) => shareGoodNews(to, response),
+  })
+  console.log(data); // after successfull async { uid: "xxx", name: "xxx" }
+  console.log(status); // after successfull async { type: "SUCCESS", message: undefined }
+
+  // or
+  api.set<Theme>('whatever you want', 'theme') // aside from TS throwing an error here (mismatched types) it does nothing to MyComponentA, but re-renders MyComponentB (or any other) subscribed to "theme" chip
 
   return (...)
 }
-
 ```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```javascript
+const MyComponentB = () => {
+  const { data, status, set } = useChip<Theme>('theme');
+
+  console.log(data); // { dark: true", color: "pink" }
+  console.log(status); // { type: "IDLE", message: undefined }
+
+  // after action taken in MyComponentA
+
+  console.log(data); // 'whatever you want'
+  console.log(status); // { type: "IDLE", message: undefined }
+
+  return (...)
+}
+```
+
+<br>
+
+---
+
+<br>
+<br>
+
+## TODO
+
+### Chipper is ready to use (I wouldn't say it's production ready, but I am going to use it in production when I make sure it doesn't suck). You guys' help would speed thing up, if you want to contribute. Todos below are sugary improvements, which would further sweeten our time with this tool:
+
+<br>
+
+- implement developer tools
+- unit tests (you're not my real mom! )
+- write `useChipper` hook so that we can create new instances of `ChipperOperator` class without having to redo `useChip` logic per singleton.<br>
+  **Note**: right now, Chipper is the global singleton that will work with `useChip` hook out of the box. However, creating new instances from `ChipperOperator` class requires retargetting the hook from `Chipper`. At this stage, you can create new singletons but there is no hook to make them reactive. Adding `useChipper` hook later down the road will not introduce breaking changes, or any changes to the API in general
+- I could probably strongtype the whole thing a bit better
+- add persistance with [storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) and/or [react-native-async-storage](https://github.com/react-native-async-storage/async-storage)?<br>
+  **Note**: react-native-async-storage is kinda heavy, soooo I don't wanna do it, but it'll work with both react and react-native. I will probably add some util function in the docs for folks who might want to have seamless experience with connecting global store and session/local storage
+- performance fixes?<br>
+  **Note**: I don't really know that much about performance-wise programming yet, but as far as my own testing of Chipper goes, it works, lol 🙈 <br>
+  I have never paid much attention to performance between tools - Redux, Context API, Zustand, Jotai - they all perform the same to me. All I care about is dev-ex and neither has fully satisfied my way of coding
+- suggestions?
+
+<br>
+<br>
+
+---
+
+<br>
+
+## [READ THE DOCS](src/lib/CHIPPER_DOCS.md)
