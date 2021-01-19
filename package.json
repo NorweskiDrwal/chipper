@@ -1,7 +1,7 @@
 {
   "name": "chipper",
-  "version": "0.9.4",
-  "description": "Chipper is a micro state management tool",
+  "version": "0.9.5",
+  "description": "Chipper - a micro state management tool",
   "keywords": [],
   "main": "src/index.tsx",
   "scripts": {
@@ -25,10 +25,5 @@
     "immer": "8.0.0",
     "react": "17.0.1"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
 }

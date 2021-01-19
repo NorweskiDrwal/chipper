@@ -7,25 +7,25 @@ Chipper is my personal experiment. I needed to learn about classes and observabl
 
 - written with TS
 - react and react-native friendly
-- [immer](https://immerjs.github.io/immer/docs/introduction) is used somewhere inside 🎉
+- [immer](https://immerjs.github.io/immer/docs/introduction) is used somewhere inside (easier that way) 🎉
 - built-in capabilities for handling status of async functions
 - almost framework-agnostic (because there's a hook you can use if you want)
 
 ## Why?
 
 I got bored with conventional solutions (looking at you, Redux). Don't get me wrong, [Redux](https://redux.js.org/) is a great tool (especially now, when [redux-toolkit](https://redux-toolkit.js.org/) is a thing), but setting up global store and making it work with [TypeScript](https://www.typescriptlang.org/) is always a treat...<br>
-Since I don't get to set up a fresh redux store very often, I always have to re-learn the docs in order to have the whole thing working the way I like. Well, not anymore.<br>
+Since I don't get to set up fresh redux store very often, I always have to re-learn the docs in order to have the whole thing working the way I like. Well, not anymore.<br>
 Chipper's API reflects my idea of a perfect state-management tool. Experience may vary 🤷
 
 ## How?
 
 ```
-yarn add @chipper
+yarn add chipper
 
-npm install @chipper
+npm install chipper
 ```
 
-The tool consists of two elements: `Chipper` class instance and `useChipper` hook, however, you don't have to use the hook, because state can be accessed from outside of react components. It won't be reactive though, so no rendering logic to keep everything in check.
+The tool consists of two elements: `Chipper` class instance and `useChipper` hook, however, you don't have to use the hook, because state can be accessed from outside of react components. It won't be reactive though, so no re-rendering logic to keep everything in check.
 
 ### 1) `Chipper`
 

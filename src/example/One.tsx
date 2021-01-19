@@ -16,6 +16,7 @@ export const One: React.FC = () => {
       },
       {
         timeout: 1000,
+        persist: true,
         onInit: () => console.log("init"),
         onError: (error) => console.log("error", error),
         onSuccess: (resp) => console.log("resp", resp)

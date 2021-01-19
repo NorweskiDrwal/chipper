@@ -31,12 +31,13 @@ export function mockAsync<T = TS.IData>(data: T, timeout?: number) {
 }
 
 export async function makeAsync<T = TS.IData>(
+  key: string,
   Query: TS.IQuery<T>,
   async: Promise<T | undefined>,
   options?: TS.IOptions
 ) {
   function setStatus(type: any, message?: any) {
-    const chip = { ...Query.get(), status: { type, message } };
+    const chip = { ...Query.get(), status: { type, message }, key };
     Query.set(chip as TS.IChip<T>);
   }
   function initAsync() {
@@ -56,7 +57,7 @@ export async function makeAsync<T = TS.IData>(
   }
   function finishAsync(resp: T | undefined) {
     const data = options?.wrapResp ? options.wrapResp(resp) : resp;
-    const chip = { data, status: { type: "SUCCESS" } };
+    const chip = { data, status: { type: "SUCCESS" }, key };
     Query.set(chip as TS.IChip<T>);
     return options?.onSuccess && options.onSuccess(data);
   }

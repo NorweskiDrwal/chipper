@@ -1,12 +1,7 @@
 import { Draft } from "immer";
 
 export type IError = Error | string;
-export type IData =
-  | null
-  | string
-  | number
-  | symbol
-  | Record<string | number | symbol, unknown>;
+export type IData = Record<string | number | symbol, unknown>;
 export type IQueue<T = IData> = [string, T][];
 export type IChips<T = IData> = Map<string, IChip<T>>;
 export type IDraft<T = IData> = (data: Draft<T>) => void;
@@ -35,5 +30,5 @@ export interface IChip<T = IData> {
 export interface IQuery<T = IData> {
   cut: () => boolean;
   get: () => IChip<T>;
-  set: (chip: IChip<T>) => void;
+  set: (chip: T | IChip<T>) => void;
 }
