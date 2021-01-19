@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useChipper } from "../lib";
-import { useRenderCounter } from "../lib/Counter";
+import { useRenderCounter } from "./Counter";
 
 type Theme = {
   dark: boolean;
@@ -11,14 +11,21 @@ type User = {
   name: string;
 };
 export const Two: React.FC = () => {
-  const [count] = useRenderCounter("two");
+  const [count] = useRenderCounter("theme");
   // const user = useChipper<User>("user");
   const theme = useChipper<Theme>("theme");
   const onClickOne = () => {
-    // user.set((draft) => {
-    //   // draft.name = 'wfwo';
-    //   draft.uid = "reie";
-    // });
+    theme.set(
+      (draft) => {
+        draft.color = "asd";
+      },
+      {
+        timeout: 1000,
+        onInit: () => console.log("init"),
+        onError: (error) => console.log("error", error),
+        onSuccess: (resp) => console.log("resp", resp)
+      }
+    );
   };
   const onClickTwo = () => {
     theme.set((draft) => {
@@ -34,7 +41,8 @@ export const Two: React.FC = () => {
       {/* <pre>user data: {JSON.stringify(user.data)}</pre>
       <pre>user status: {JSON.stringify(user.status)}</pre> */}
       <pre>theme data: {JSON.stringify(theme.data)}</pre>
-      <pre>rerenders: {count}</pre>
+      <pre>theme status: {JSON.stringify(theme.status)}</pre>
+      <pre>renders: {count}</pre>
     </div>
   );
 };

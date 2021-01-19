@@ -14,7 +14,7 @@
     "immer": "8.0.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-scripts": "3.3.0"
+    "react-scripts": "4.0.1"
   },
   "devDependencies": {
     "@types/react": "16.9.19",
@@ -25,5 +25,10 @@
     "immer": "8.0.0",
     "react": "17.0.1"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
