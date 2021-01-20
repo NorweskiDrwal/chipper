@@ -6,7 +6,7 @@
 
 <br>
 
-## [CLICK HERE](src/lib/CHIPPER_DOCS.md) to read the docs
+## [CLICK HERE](./CHIPPER_DOCS.md) to read the docs
 
 <br>
 
@@ -71,7 +71,7 @@ And that's pretty much it. Congratulations, you just spent 10 seconds setting up
 
 # What now?
 
-## Scroll down for more elaborate example or [CLICK HERE](src/lib/CHIPPER_DOCS.md) to read the docs
+## Scroll down for more elaborate example or [CLICK HERE](./CHIPPER_DOCS.md) to read the docs
 
 <br>
 <br>
@@ -83,7 +83,7 @@ import Chipper, { useChip } from "chipper";
 
 Chipper.createQueue([
   ["user", { uid: "12345", name: "piglet" }],
-  ["theme", { dark: true, color: "pink" }],
+  ["theme", { dark: true, color: "pink" }]
 ]);
 
 // for typescript
@@ -174,4 +174,4 @@ const MyComponentB = () => {
 
 <br>
 
-## [READ THE DOCS](src/lib/CHIPPER_DOCS.md)
+## [READ THE DOCS](./CHIPPER_DOCS.md)
