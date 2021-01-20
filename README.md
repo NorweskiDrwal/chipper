@@ -6,7 +6,7 @@
 
 <br>
 
-## [CLICK HERE](src/lib/CHIPPER_DOCS.md) to read the docs
+## [CLICK HERE](./CHIPPER_DOCS.md) to read the docs
 
 <br>
 
@@ -71,7 +71,7 @@ And that's pretty much it. Congratulations, you just spent 10 seconds setting up
 
 # What now?
 
-## Scroll down for more elaborate example or [CLICK HERE](src/lib/CHIPPER_DOCS.md) to read the docs
+## Scroll down for more elaborate example or [CLICK HERE](./CHIPPER_DOCS.md) to read the docs
 
 <br>
 <br>
@@ -83,7 +83,7 @@ import Chipper, { useChip } from "chipper";
 
 Chipper.createQueue([
   ["user", { uid: "12345", name: "piglet" }],
-  ["theme", { dark: true, color: "pink" }],
+  ["theme", { dark: true, color: "pink" }]
 ]);
 
 // for typescript
@@ -158,7 +158,8 @@ const MyComponentB = () => {
 - unit tests (you're not my real mom! )
 - write `useChipper` hook so that we can create new instances of `ChipperOperator` class without having to redo `useChip` logic per singleton.<br>
   **Note**: right now, Chipper is the global singleton that will work with `useChip` hook out of the box. However, creating new instances from `ChipperOperator` class requires retargetting the hook from `Chipper`. At this stage, you can create new singletons but there is no hook to make them reactive. Adding `useChipper` hook later down the road will not introduce breaking changes, or any changes to the API in general
-- I could probably strongtype the whole thing a bit better
+- I could probably strongtype the whole thing a bit better<br>
+  **Note**: I know TypeScript, but I am not a TS programmer. I assume there's a way to infer state types based on what we pass to Chipper using `createQueue`, so we don't have to tell the compiler the types explicitly every time we use `useChip`
 - add persistance with [storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) and/or [react-native-async-storage](https://github.com/react-native-async-storage/async-storage)?<br>
   **Note**: react-native-async-storage is kinda heavy, soooo I don't wanna do it, but it'll work with both react and react-native. I will probably add some util function in the docs for folks who might want to have seamless experience with connecting global store and session/local storage
 - performance fixes?<br>
@@ -173,4 +174,4 @@ const MyComponentB = () => {
 
 <br>
 
-## [READ THE DOCS](src/lib/CHIPPER_DOCS.md)
+## [READ THE DOCS](./CHIPPER_DOCS.md)

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useChip } from "../lib";
+import { mockAsync } from "../lib/utils";
 import { useRenderCounter } from "./Counter";
 
 type Theme = {
@@ -12,36 +13,47 @@ type User = {
 };
 export const Two: React.FC = () => {
   const [count] = useRenderCounter("theme");
-  // const user = useChipper<User>("user");
   const theme = useChip<Theme>("theme");
-  const onClickOne = () => {
+  const user = useChip<User>("user");
+
+  const onTheme = () => {
+    theme.set((theme) => {
+      theme.dark = false;
+    });
+  };
+  const onMockClick = () => {
     theme.set(
-      (draft) => {
-        draft.color = "asd";
+      (theme) => {
+        theme.color = "orange";
       },
       {
-        timeout: 1000,
-        onInit: () => console.log("init"),
-        onError: (error) => console.log("error", error),
-        onSuccess: (resp) => console.log("resp", resp),
+        timeout: 2000
       }
     );
   };
-  const onClickTwo = () => {
-    theme.set((draft) => {
-      draft.dark = false;
-    });
+  const onAsyncClick = async () => {
+    const someAsyncRequest = mockAsync(
+      { dark: true, color: "worvnjwrnv" },
+      1234
+    );
+    theme.set(someAsyncRequest);
+  };
+  const onUser = () => {
+    theme.api.set<User>({ uid: "56789", name: "tigger" }, "user");
   };
 
   return (
-    <div>
-      <div>TWO</div>
-      <button onClick={onClickOne}>set one</button>
-      <button onClick={onClickTwo}>set two</button>
-      {/* <pre>user data: {JSON.stringify(user.data)}</pre>
-      <pre>user status: {JSON.stringify(user.status)}</pre> */}
+    <div style={{ textAlign: "center" }}>
+      <p>THEME</p>
+      <div>
+        <button onClick={onTheme}>set theme</button>
+        <button onClick={onMockClick}>set mock theme 2s</button>
+        <button onClick={onAsyncClick}>set async theme</button>
+        <button onClick={onUser}>set user</button>
+      </div>
       <pre>theme data: {JSON.stringify(theme.data)}</pre>
       <pre>theme status: {JSON.stringify(theme.status)}</pre>
+      <pre>user status: {JSON.stringify(user.status)}</pre>
       <pre>renders: {count}</pre>
     </div>
   );
