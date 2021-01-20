@@ -150,7 +150,7 @@ const MyComponentB = () => {
 
 ## TODO
 
-### Chipper is ready to use (I wouldn't say it's production ready, but I am going to use it in production when I make sure it doesn't suck). You guys' help would speed thing up, if you want to contribute. Todos below are sugary improvements, which would further sweeten our time with this tool:
+### Chipper is ready to use (I wouldn't say it's production ready, but I am going to use it in production when I make sure it doesn't suck). You guys' help would speed things up, if you want to contribute. Todos below are sugary improvements, which would further sweeten our time with this tool:
 
 <br>
 
@@ -158,7 +158,8 @@ const MyComponentB = () => {
 - unit tests (you're not my real mom! )
 - write `useChipper` hook so that we can create new instances of `ChipperOperator` class without having to redo `useChip` logic per singleton.<br>
   **Note**: right now, Chipper is the global singleton that will work with `useChip` hook out of the box. However, creating new instances from `ChipperOperator` class requires retargetting the hook from `Chipper`. At this stage, you can create new singletons but there is no hook to make them reactive. Adding `useChipper` hook later down the road will not introduce breaking changes, or any changes to the API in general
-- I could probably strongtype the whole thing a bit better
+- I could probably strongtype the whole thing a bit better<br>
+  **Note**: I know TypeScript, but I am not a TS programmer. I assume there's a way to infer state types based on what we pass to Chipper using `createQueue`, so we don't have to tell the compiler the types explicitly every time we use `useChip`
 - add persistance with [storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) and/or [react-native-async-storage](https://github.com/react-native-async-storage/async-storage)?<br>
   **Note**: react-native-async-storage is kinda heavy, soooo I don't wanna do it, but it'll work with both react and react-native. I will probably add some util function in the docs for folks who might want to have seamless experience with connecting global store and session/local storage
 - performance fixes?<br>

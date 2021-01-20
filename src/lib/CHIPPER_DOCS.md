@@ -160,7 +160,7 @@ const chip = {
 
 ## 1) `Chipper` props
 
-- ### `createQueue(queue: IQueue): void`<br>
+- ## `createQueue(queue: IQueue): void`
 
   This method loads data into Chipper. It takes the tuple's second item (value/data) and turns it into a `chip` that gets stored inside `Map()` instance
 
@@ -168,7 +168,7 @@ const chip = {
   Chipper.createQueue([["user", { uid: "12345", name: "piglet" }]]);
   ```
 
-- ### `queryQueue(key: string, data: IData): IQuery`<br>
+- ## `queryQueue(key: string, data: IData): IQuery`
 
   This method returns an object:
 
@@ -198,7 +198,7 @@ const chip = {
   api.cut("theme"); // removes 'theme' state
   ```
 
-- ### `enqueue(key: string, update: QUpdate): void`
+- ## `enqueue(key: string, update: QUpdate): void`
 
   This method adds updated data to Chipper's queue (or subscribes to state, if you will).
   In case of Chipper, `update` is derived from `React.useState()`'s dispatch, but you could throw in here whatever value, if you want to reuse the logic for something else.
@@ -207,7 +207,7 @@ const chip = {
   Chipper.enqueue(key, updater);
   ```
 
-- ### `dequeue(update: QUpdate): void`
+- ## `dequeue(update: QUpdate): void`
 
   This method removes subscription to state.
 
@@ -215,7 +215,7 @@ const chip = {
   Chipper.dequeue(updater);
   ```
 
-- ### `convey(key: string, chip: IChip): void`
+- ## `convey(key: string, chip: IChip): void`
 
   This method updates all interested chips.
 
@@ -223,13 +223,13 @@ const chip = {
   Chipper.convey(key, chip);
   ```
 
-- ### `queue: QUpdater[]`
+- ## `queue: QUpdater[]`
 
   Queue is an array of updated values that we use to pinpoint which components should be updated.
 
-- ### `chips: Map<string, IChip>[]`
+- ## `chips: Map<string, IChip>[]`
 
-Chips is a Map object storing the state.
+  Chips is a Map object storing the state.
 
 ## 2) `useChip` props
 
@@ -245,7 +245,7 @@ Chips is a Map object storing the state.
   }
   ```
 
-  ...that will be modified internally by the plugin if you use `useChip`'s `set()` method either with an async function passed as data or with `timeout` option for "regular" data. Chipper doesn't give you methods to update the `status` manually.
+  ...that will be modified internally by the plugin if you use `useChip`'s `set()` method either with an async function passed as data or with `timeout` option for "regular" data. Chipper [doesn't\*](<#api:-chipper.queryqueue()>) give you methods to update the `status` manually.
 
 - ## `set: (update: IUpdate, options?: IOptions): void`
 
@@ -308,7 +308,7 @@ Chips is a Map object storing the state.
 
   ```javascript
   set(Promise(...), {
-    timeout: 1234 // in case of promises/async timeout is ommited
+    timeout: 1234 // in case of promises timeout is ommited
     wrapResp: JSON.stringify,
     onInit: () => console.log('init'),
     onError: (error) => console.log('error', error),
@@ -320,7 +320,7 @@ Chips is a Map object storing the state.
   set(({ something }) => {
     something.anything = "I am potato";
   }, {
-    timeout: 1234 // since plain data is being passed, the timeout applies
+    timeout: 1234 // since non-promise data is being passed, the timeout applies
     wrapResp: JSON.stringify,
     onInit: () => {
       const persistSomething = api.get("theme");
@@ -333,9 +333,9 @@ Chips is a Map object storing the state.
 
 - ## `api: Chipper.queryQueue()`
 
-  The `api` property is taken 1:1 from `queryQueue()` method used in `Chipper` class, however, since it's used inside `useChip`, it informs other components about changes made to their state so they can re-render and update properly.
+  The `api` property is taken 1:1 from [queryQueue()](<#queryqueue(key:-string,-data:-idata):-iquery>) method used in `Chipper` class, however, since it's used inside `useChip`, it informs other components about changes made to their state so they can re-render and update properly.
 
-  **TIP:** Technically, you can use `api`'s `set` property to set `status` of every piece of state, but you HAVE TO pass a `chip` (not just plain data) as a first argument. This might come in handy if you wanna kick some other subscribed component into `LOADING` state
+  **TIP:** Technically, you can use `api`'s `set` property to set `status` of every piece of state, but you HAVE TO pass a [chip](#chipper-api) (not just plain data) as a first argument. This might come in handy if you wanna kick some other subscribed component into `LOADING` state
 
   ```javascript
   const { data, api } = useChip("user");
