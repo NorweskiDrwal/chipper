@@ -1,19 +1,31 @@
-import * as React from "react";
+import React from 'react';
+
 
 import Chipper from "./lib";
-import { One } from "./example/One";
-import { Two } from "./example/Two";
 
 Chipper.createQueue([
   ["user", { uid: "12345", name: "piglet" }],
   ["theme", { dark: true, color: "pink" }]
 ]);
 
-export default function App() {
+function App() {
   return (
     <div className="App">
-      <One />
-      <Two />
+      <header className="App-header">
+        <p>
+          Edit <code>src/App.tsx</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
     </div>
   );
 }
+
+export default App;

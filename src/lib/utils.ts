@@ -1,28 +1,33 @@
+/* eslint-disable */
+
 import produce from "immer";
-import * as TS from "./types";
+import { IChip, IData } from ".";
 
-export function newChip<T = TS.IData>(data?: T): TS.IChip<T> {
-  return { data, status: { type: "IDLE" } };
+export function newChip<T = IData>(data: T) {
+  return { data, status: { type: "IDLE" } } as IChip;
 }
 
-export function inequalityCheck<T = TS.IChip<TS.IData>>(chop: T, chip: T) {
-  return JSON.stringify(chop) !== JSON.stringify(chip);
+export function equalityCheck(chop: any, chip: any) {
+  const isObject = (v: IData) => typeof v === "object";
+  const chopDataKs = isObject(chop.data) && Object.keys(chop.data)
+  const chipDataKs = isObject(chip.data) && Object.keys(chip.data)
+  const isEqual = (chip: any, chop: any) => JSON.stringify(chop) === JSON.stringify(chip);
+  if (isEqual(chopDataKs, chipDataKs)) {
+    if (isEqual(chop, chip)) return 'skip';
+    else return 'update';
+  } else return 'warn';
 }
 
-export function chopper<T = TS.IData>(
-  key: string,
-  chop: TS.IChip<T>,
-  update: TS.ISet
-) {
+export function chopper(key: string, chop, update) {
   let updated;
   const isFunction = typeof update === "function";
-  if (isFunction) updated = produce(chop.data, update as TS.IDraft);
+  if (isFunction) updated = produce(chop.data, update);
   else updated = produce(chop.data, () => update);
-  return { ...chop, data: updated, key } as TS.IChip<T>;
+  return { ...chop, data: updated, key };
 }
 
-export function mockAsync<T = TS.IData>(data: T, timeout?: number) {
-  return new Promise<T>((resolve, reject) => {
+export function mockAsync(data, timeout?: number) {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (data !== undefined) resolve(data);
       else reject({ message: "ChipperError: .mockAsync() failed" });
@@ -30,21 +35,21 @@ export function mockAsync<T = TS.IData>(data: T, timeout?: number) {
   });
 }
 
-export async function makeAsync<T = TS.IData>(
+export async function makeAsync(
   key: string,
-  Query: TS.IQuery<T>,
-  async: Promise<T | undefined>,
-  options?: TS.IOptions
+  Query,
+  async,
+  options
 ) {
   function setStatus(type: any, message?: any) {
     const chip = { ...Query.get(), status: { type, message }, key };
-    Query.set(chip as TS.IChip<T>);
+    Query.set(chip);
   }
   function initAsync() {
     setStatus("LOADING");
     return options?.onInit && options.onInit();
   }
-  async function runAsync(): Promise<T | Error | undefined> {
+  async function runAsync() {
     try {
       return await async;
     } catch (error) {
@@ -55,10 +60,10 @@ export async function makeAsync<T = TS.IData>(
     setStatus("ERROR", message);
     return options?.onError && options.onError(message);
   }
-  function finishAsync(resp: T | undefined) {
+  function finishAsync(resp) {
     const data = options?.wrapResp ? options.wrapResp(resp) : resp;
     const chip = { data, status: { type: "SUCCESS" }, key };
-    Query.set(chip as TS.IChip<T>);
+    Query.set(chip);
     return options?.onSuccess && options.onSuccess(data);
   }
 

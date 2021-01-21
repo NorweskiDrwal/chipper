@@ -1,78 +1,80 @@
 import * as React from "react";
-
-import * as TS from "./types";
 import * as Utils from "./utils";
 
-class ChipperQueue {
-  queue: TS.QUpdater[] = [];
+export type IData = Record<string, unknown> | string;
+interface IStatus { type: 'IDLE' | 'LOADING' | 'ERROR' | 'SUCCESS'; message?: Error | string }
+export interface IChip<T = IData> { data: T; status: IStatus }
+type IUpque<T = IData> = IChip<T> | ((chip: IChip<T>) => IChip<T>);
+interface IQue<T = IData> { key: string; update: IUpque<T> }
+type IQueue<T = IData> = [string, T][];
 
-  enqueue(key: string, update: TS.QUpdate) {
+class ChipperQueue {
+  queue: IQue[] = [];
+
+  enqueue(key: string, update: IUpque) {
     this.queue.push({ key, update });
   }
-  dequeue(update: TS.QUpdate) {
+  dequeue(update: IUpque) {
     this.queue = this.queue.filter((chip) => update !== chip.update);
   }
-  convey(key: string, chip: TS.IChip) {
-    this.queue.forEach((convey) => key === convey.key && convey.update(chip));
+  convey(key: string, chip: IChip) {
+    this.queue.forEach((convey) => {
+      if (key === convey.key) {
+        if (typeof convey.update === 'function') convey.update(chip);
+        else convey.update = chip;
+      }
+    });
   }
 }
 
 export class ChipperOperator extends ChipperQueue {
-  chips = new Map<string, TS.IChip>();
+  chips = new Map<string, IChip>();
 
-  createQueue(queue: TS.IQueue) {
+  createQueue(queue: IQueue) {
     queue.map((que) => this.chips.set(que[0], Utils.newChip(que[1])));
   }
-  queryQueue<T = TS.IData>(key: string, data?: T) {
-    if (!this.chips.has(key))
-      this.chips.set(key, Utils.newChip(data) as TS.IChip);
+  queryQueue<T = IData>(key: string, data: T) {
+    if (!this.chips.has(key)) this.chips.set(key, Utils.newChip(data))
     return {
-      get: (cKey?: string) => this.chips.get(cKey || key) as TS.IChip<T>,
-      cut: (cKey?: string) => this.chips.delete(cKey || key),
-      set: <R = T>(chop: R | TS.IChip<R>, cKey?: string) => {
-        if (typeof chop !== "function" && !(chop instanceof Promise)) {
-          let chip = chop as TS.IChip<R>;
-          if (chip.status === undefined) chip = Utils.newChip(chop as R);
-          this.chips.set(cKey || key, chip as TS.IChip);
-          this.convey(cKey || key, chip as TS.IChip);
+      get: (k?: string) => this.chips.get(k || key),
+      cut: (k?: string) => this.chips.delete(k || key),
+      set: <R = T>(data: R | IChip<R>, k?: string) => {
+        let chip = data as IChip;
+        if (typeof data !== "function" && !(data instanceof Promise)) {
+          if (chip.status === undefined) chip = Utils.newChip(data);
+          const check = Utils.equalityCheck(data, chip);
+          if (check === 'update') {
+            this.chips.set(k || key, chip);
+            this.convey(k || key, chip);
+          } else if (check === 'warn') console.warn("ChipperError: You're changing data shape");
         } else console.warn("ChipperError: Promises and functions are ignored");
-      },
+      }
     };
   }
+}
+
+function ChipperConveyor<T = IData>(chipper: ChipperOperator, key: string, data?: T) {
+  const query = chipper.queryQueue(key, data);
+  const chop = query.get();
+  const [, updater] = React.useState(chop) as [never, any];
+
+  React.useEffect(() => {
+    chipper.enqueue(key, updater);
+    return () => {
+      chipper.dequeue(updater);
+    };
+  }, [chipper, key]);
+
+  return query;
+}
+
+export function useChipper<T = IData>(chipper: ChipperOperator, key: string, data?: T) {
+  const Query = ChipperConveyor(chipper, key, data);
 }
 
 const Chipper = new ChipperOperator();
-
-export function useChip<T = TS.IData>(key: string, data?: T) {
-  const query = Chipper.queryQueue(key, data);
-  const chop = query.get();
-  const [, updater] = React.useState(chop) as [never, TS.IDispatch];
-  const isLoading = chop.status?.type === "LOADING";
-
-  React.useEffect(() => {
-    Chipper.enqueue(key, updater);
-    return () => {
-      if (!isLoading) Chipper.dequeue(updater);
-    };
-  }, [key, isLoading]);
-
-  const set = async (update: TS.IUpdate<T>, options?: TS.IOptions<T>) => {
-    if (!isLoading) {
-      const updateRunner = async (run: (chip: TS.IChip<T>) => void) => {
-        const chip = Utils.chopper(key, chop, update as TS.ISet);
-        if (update instanceof Promise)
-          await Utils.makeAsync(key, query, update, options);
-        else if (Utils.inequalityCheck(chop, chip)) run(chip);
-      };
-      if (options?.timeout! > 0) {
-        updateRunner(async (chip) => {
-          const async = Utils.mockAsync(chip.data, options?.timeout);
-          await Utils.makeAsync(key, query, async, options);
-        });
-      } else updateRunner(query.set);
-    }
-  };
-
-  return { data: chop?.data as T, status: chop?.status, set, api: query };
+export function useChip<T = IData>(key: string, data?: T) {
+  const Query = ChipperConveyor(Chipper, key, data);
 }
+
 export default Chipper;
